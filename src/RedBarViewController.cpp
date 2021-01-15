@@ -28,6 +28,29 @@ using namespace RedBar;
 
 DEFINE_CLASS(RedBarViewController);
 
+void onCalcClick(RedBarViewController* self)  {
+    // Swap the current mode
+    UnityEngine::Color color1;
+    UnityEngine::Color color2;
+    color1.r = getConfig().config["DiehpR"].GetFloat();
+    color1.g = getConfig().config["DiehpG"].GetFloat();
+    color1.b = getConfig().config["DiehpB"].GetFloat();
+
+    color2.r = getConfig().config["HighhpR"].GetFloat();
+    color2.g = getConfig().config["HighhpG"].GetFloat();
+    color2.b = getConfig().config["HighhpB"].GetFloat();
+
+    //0.5
+    getConfig().config["LowhpR"].SetFloat(color1.r + (color2.r - color1.r)*0.5f);
+    getConfig().config["LowhpG"].SetFloat(color1.g + (color2.g - color1.g)*0.5f);
+    getConfig().config["LowhpB"].SetFloat(color1.b + (color2.b - color1.b)*0.5f);
+
+    //0.7
+    getConfig().config["DefpR"].SetFloat(color1.r + (color2.r - color1.r)*0.7f);
+    getConfig().config["DefhpG"].SetFloat(color1.g + (color2.g - color1.g)*0.7f);
+    getConfig().config["DefhpB"].SetFloat(color1.b + (color2.b - color1.b)*0.7f);
+}
+
 void onRainbowChange(RedBarViewController* self, bool newValue) {
         getConfig().config["Rainbow"].SetBool(newValue);
 }
@@ -198,13 +221,15 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         // Rainbow
         auto RainbowChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(
                    classof(UnityEngine::Events::UnityAction_1<bool>*), this, onRainbowChange);
-        QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Rainbow Bar when full energy (overrides Fadeout)", getConfig().config["Rainbow"].GetBool(), RainbowChange);
+        UnityEngine::UI::Toggle* Rain = QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Rainbow Bar when full energy", getConfig().config["Rainbow"].GetBool(), RainbowChange);
+        QuestUI::BeatSaberUI::AddHoverHint(Rain->get_gameObject(), "overrides Fadeout");
 
         // AlwaysRainbow
         auto AlwaysRainbowChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(
                    classof(UnityEngine::Events::UnityAction_1<bool>*), this, onAlwaysRainbowChange);
-        QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Always Rainbow Bar (overrides Fadeout and Rainbow)", getConfig().config["AlwaysRainbow"].GetBool(), AlwaysRainbowChange);
-        
+        UnityEngine::UI::Toggle* Alw = QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Always Rainbow Bar", getConfig().config["AlwaysRainbow"].GetBool(), AlwaysRainbowChange);
+        QuestUI::BeatSaberUI::AddHoverHint(Alw->get_gameObject(), "overrides Fadeout, Fade red to green and Rainbow");
+
         // Fadeout
         auto FadeoutChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(
                    classof(UnityEngine::Events::UnityAction_1<bool>*), this, onFadeoutChange);
@@ -213,80 +238,84 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         // Alpha
         auto AlphaChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onAlphaChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "Alpha", 1, 0.1, getConfig().config["Alpha"].GetFloat(), AlphaChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "Alpha", 1, 0.1, getConfig().config["Alpha"].GetFloat(), 0.0f, 1.0f, AlphaChange);
 
-        QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n\n                                          Values under 0.0 will be 0.0");
-        QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n                                          Values over 1.0 will be 1.0");
+        //QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n\n                                          Values under 0.0 will be 0.0");
+        //QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n                                          Values over 1.0 will be 1.0");
+        auto CalcClick = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(
+                    classof(UnityEngine::Events::UnityAction*), this, onCalcClick);
+        UnityEngine::UI::Button* Calc = QuestUI::BeatSaberUI::CreateUIButton(container->get_transform(), "Calculate Values", CalcClick);
+        QuestUI::BeatSaberUI::AddHoverHint(Calc->get_gameObject(), "Set's all Values for the Colors to fade betweem the 15% and 100% Value\nNote: Once the button is pressed do the updated values not show. Just try yourself by playing a song");
 
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nunder 15% energy");
         // DieR
         auto DieRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDieRChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["DiehpR"].GetFloat(), DieRChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["DiehpR"].GetFloat(), 0.0f, 1.0f, DieRChange);
         // DieG
         auto DieGChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDieGChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["DiehpG"].GetFloat(), DieGChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["DiehpG"].GetFloat(), 0.0f, 1.0f, DieGChange);
         // DieB
         auto DieBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDieBChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["DiehpB"].GetFloat(), DieBChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["DiehpB"].GetFloat(), 0.0f, 1.0f, DieBChange);
         
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nunder 50% energy");
         // LowR
         auto LowRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onLowRChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["LowhpR"].GetFloat(), LowRChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["LowhpR"].GetFloat(), 0.0f, 1.0f, LowRChange);
         // LowG
         auto LowGChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onLowGChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["LowhpG"].GetFloat(), LowGChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["LowhpG"].GetFloat(), 0.0f, 1.0f, LowGChange);
         // LowB
         auto LowBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onLowBChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["LowhpB"].GetFloat(), LowBChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["LowhpB"].GetFloat(), 0.0f, 1.0f, LowBChange);
 
-        QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nunder 70%");
+        QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nover 50% energy");
         // DefR
         auto DefRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDefRChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["DefhpR"].GetFloat(), DefRChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["DefhpR"].GetFloat(), 0.0f, 1.0f, DefRChange);
         // DefG
         auto DefGChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDefGChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["DefhpG"].GetFloat(), DefGChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["DefhpG"].GetFloat(), 0.0f, 1.0f, DefGChange);
         // DefB
         auto DefBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDefBChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["DefhpB"].GetFloat(), DefBChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["DefhpB"].GetFloat(), 0.0f, 1.0f, DefBChange);
         
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nover 70% energy");
         // MidR
         auto MidRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onMidRChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["MidhpR"].GetFloat(), MidRChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["MidhpR"].GetFloat(), 0.0f, 1.0f, MidRChange);
         // MidG
         auto MidGChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onMidGChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["MidhpG"].GetFloat(), MidGChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["MidhpG"].GetFloat(), 0.0f, 1.0f, MidGChange);
         // MidB
         auto MidBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onMidBChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["MidhpB"].GetFloat(), MidBChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["MidhpB"].GetFloat(), 0.0f, 1.0f, MidBChange);
 
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n100% energy");
         // HeighR
         auto HeighRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onHeighRChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["HighhpR"].GetFloat(), HeighRChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Red", 1, 0.1, getConfig().config["HighhpR"].GetFloat(), 0.0f, 1.0f, HeighRChange);
         // HeighG
         auto HeighGChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onHeighGChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["HighhpG"].GetFloat(), HeighGChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Green", 1, 0.1, getConfig().config["HighhpG"].GetFloat(), 0.0f, 1.0f, HeighGChange);
         // HeighB
         auto HeighBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onHeighBChange);
-        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["HighhpB"].GetFloat(), HeighBChange);
+        QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["HighhpB"].GetFloat(), 0.0f, 1.0f, HeighBChange);
     }
 }
 
