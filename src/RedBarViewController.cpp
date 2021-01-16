@@ -13,6 +13,11 @@
 #include "HMUI/ModalView.hpp"
 #include "HMUI/Touchable.hpp"
 #include "main.hpp"
+#include "UnityEngine/Resources.hpp"
+#include "GlobalNamespace/ColorPickerButtonController.hpp"
+#include "GlobalNamespace/HSVPanelController.hpp"
+#include "GlobalNamespace/ColorChangeUIEventType.hpp"
+#include "System/Action_2.hpp"
 
 #include "questui/shared/BeatSaberUI.hpp"
 #include "questui/shared/CustomTypes/Components/ExternalComponents.hpp"
@@ -53,6 +58,10 @@ void onCalcClick(RedBarViewController* self)  {
 
 void onRainbowChange(RedBarViewController* self, bool newValue) {
         getConfig().config["Rainbow"].SetBool(newValue);
+}
+
+void onFadeChange(RedBarViewController* self, bool newValue) {
+        getConfig().config["FullFade"].SetBool(newValue);
 }
 
 void onAlwaysRainbowChange(RedBarViewController* self, bool newValue) {
@@ -213,6 +222,74 @@ void onDefBChange(RedBarViewController* self, float newValue)   {
     getConfig().config["DefhpB"].SetFloat(newValue);
 }
 
+void onDieChange(RedBarViewController* self, UnityEngine::Color* newValue, GlobalNamespace::ColorChangeUIEventType unused) {
+    getConfig().config["DiehpR"].SetFloat(newValue->r);
+    getConfig().config["DiehpG"].SetFloat(newValue->g);
+    getConfig().config["DiehpB"].SetFloat(newValue->b);
+}
+
+typedef System::Action_2<UnityEngine::Color, GlobalNamespace::ColorChangeUIEventType>* ColorChangeDelegate;
+UnityEngine::GameObject* CreateColorPickerButton(UnityEngine::Transform* parent, std::string text, UnityEngine::Color defaultColor, ColorChangeDelegate onChange) {
+    // use QuestUI toggle as starting point to make positioning and sizing easier
+    auto fakeToggle = QuestUI::BeatSaberUI::CreateToggle(parent, text, nullptr);
+    auto gameObject = fakeToggle->get_transform()->get_parent()->get_gameObject();
+    UnityEngine::Object::Destroy(fakeToggle->get_gameObject());
+
+    // create element that gets toggled to contain the actual picker
+    auto pickerModalGO = UnityEngine::GameObject::New_ctor(il2cpp_utils::createcsstr("QountersMinusColorPickerModal"));
+    auto pickerModalGORect = pickerModalGO->AddComponent<UnityEngine::RectTransform*>();
+    pickerModalGORect->set_anchorMin(UnityEngine::Vector2(1.0f, 1.0f));
+    pickerModalGORect->set_anchorMax(UnityEngine::Vector2(1.0f, 1.0f));
+    pickerModalGORect->set_sizeDelta(UnityEngine::Vector2(40.0f, 40.0f));
+    pickerModalGO->get_transform()->SetParent(parent, false);
+    pickerModalGO->SetActive(false);
+
+    // extra close button other than re-clicking the color button
+    // auto closeButton = QuestUI::BeatSaberUI::CreateUIButton(gameObject->get_transform(), "Close", "PracticeButton", UnityEngine::Vector2(15.0f, -0.5f), il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(
+    //     classof(UnityEngine::Events::UnityAction*), pickerModalGO, +[](UnityEngine::GameObject* pickerModalGO) {
+    //         pickerModalGO->SetActive(false);
+    //     }
+    // ));
+    // closeButton->get_gameObject()->SetActive(false);
+
+    // initialize the color button that toggles the picker open
+    static auto colorPickerButtonControllers = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::ColorPickerButtonController*>();
+    static auto buttonBase = colorPickerButtonControllers->values[0]->get_gameObject();
+    auto buttonGO = UnityEngine::Object::Instantiate(buttonBase, gameObject->get_transform(), false);
+    auto buttonRect = buttonGO->GetComponent<UnityEngine::RectTransform*>();
+    buttonRect->set_anchorMin(UnityEngine::Vector2(1.0f, 0.5f));
+    buttonRect->set_anchorMax(UnityEngine::Vector2(1.0f, 0.5f));
+    buttonRect->set_anchoredPosition(UnityEngine::Vector2(-1.0f, -0.5f));
+    buttonRect->set_pivot(UnityEngine::Vector2(1.0f, 0.5f));
+    auto colorPickerButtonController = buttonGO->GetComponent<GlobalNamespace::ColorPickerButtonController*>();
+    colorPickerButtonController->SetColor(defaultColor);
+
+    // initialize the picker itself
+    static auto hsvColorPickers = UnityEngine::Resources::FindObjectsOfTypeAll<GlobalNamespace::HSVPanelController*>();
+    static auto pickerBase = hsvColorPickers->values[0]->get_gameObject();
+    auto pickerGO = UnityEngine::Object::Instantiate(pickerBase, pickerModalGO->get_transform(), false);
+    auto hsvPanelController = pickerGO->GetComponent<GlobalNamespace::HSVPanelController*>();
+    UnityEngine::Object::Destroy(pickerGO->get_transform()->Find(il2cpp_utils::createcsstr("ColorPickerButtonPrimary"))->get_gameObject());
+    auto pickerRect = pickerGO->GetComponent<UnityEngine::RectTransform*>();
+    pickerRect->set_pivot(UnityEngine::Vector2(0.25f, 0.77f));
+    pickerRect->set_localScale(UnityEngine::Vector3(0.75f, 0.75f, 0.75f));
+
+    // event bindings
+    hsvPanelController->add_colorDidChangeEvent(il2cpp_utils::MakeDelegate<ColorChangeDelegate>(
+        classof(ColorChangeDelegate), colorPickerButtonController, +[](GlobalNamespace::ColorPickerButtonController* buttonController, UnityEngine::Color color, GlobalNamespace::ColorChangeUIEventType eventType) {
+            buttonController->SetColor(color);
+        })
+    );
+    hsvPanelController->add_colorDidChangeEvent(onChange);
+    colorPickerButtonController->button->get_onClick()->AddListener(il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(
+        classof(UnityEngine::Events::UnityAction*), pickerModalGO, +[](UnityEngine::GameObject* pickerModalGO) {
+            pickerModalGO->SetActive(!pickerModalGO->get_activeSelf());
+        }
+    ));
+
+    return buttonGO;
+}
+
 void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling){
     if(firstActivation) {
         get_gameObject()->AddComponent<Touchable*>();
@@ -242,11 +319,23 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
 
         //QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n\n                                          Values under 0.0 will be 0.0");
         //QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n                                          Values over 1.0 will be 1.0");
-        auto CalcClick = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction*>(
-                    classof(UnityEngine::Events::UnityAction*), this, onCalcClick);
-        UnityEngine::UI::Button* Calc = QuestUI::BeatSaberUI::CreateUIButton(container->get_transform(), "Calculate Values", CalcClick);
-        QuestUI::BeatSaberUI::AddHoverHint(Calc->get_gameObject(), "Set's all Values for the Colors to fade betweem the 15% and 100% Value\nNote: Once the button is pressed do the updated values not show. Just try yourself by playing a song");
+        
+        // FullFade
+        auto FadeChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(
+                   classof(UnityEngine::Events::UnityAction_1<bool>*), this, onFadeChange);
+        UnityEngine::UI::Toggle* FullFade = QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Use fade between 15% and 100% colors", getConfig().config["FullFade"].GetBool(), FadeChange);
+        QuestUI::BeatSaberUI::AddHoverHint(FullFade->get_gameObject(), "Fades between the 15% and 100% Color");
 
+
+        auto DieChange = CreateColorPickerButton(container->get_transform(), "under 15% energy", UnityEngine::Color(getConfig().config["DiehpR"].GetFloat(), getConfig().config["DiehpG"].GetFloat(), getConfig().config["DiehpB"].GetFloat()), il2cpp_utils::MakeDelegate<ColorChangeDelegate>(
+            classof(ColorChangeDelegate), container, +[](UnityEngine::GameObject* container, UnityEngine::Color newValue, GlobalNamespace::ColorChangeUIEventType eventType) {
+                getConfig().config["DiehpR"].SetFloat(newValue.r);
+                getConfig().config["DiehpG"].SetFloat(newValue.g);
+                getConfig().config["DiehpB"].SetFloat(newValue.b);
+            })
+        );
+
+        /*
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nunder 15% energy");
         // DieR
         auto DieRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
@@ -261,6 +350,17 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDieBChange);
         QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["DiehpB"].GetFloat(), 0.0f, 1.0f, DieBChange);
         
+*/
+
+        auto LowChange = CreateColorPickerButton(container->get_transform(), "under 50% energy", UnityEngine::Color(getConfig().config["LowhpR"].GetFloat(), getConfig().config["LowhpG"].GetFloat(), getConfig().config["LowhpB"].GetFloat()), il2cpp_utils::MakeDelegate<ColorChangeDelegate>(
+            classof(ColorChangeDelegate), container, +[](UnityEngine::GameObject* container, UnityEngine::Color newValue, GlobalNamespace::ColorChangeUIEventType eventType) {
+                getConfig().config["LowhpR"].SetFloat(newValue.r);
+                getConfig().config["LowhpG"].SetFloat(newValue.g);
+                getConfig().config["LowhpB"].SetFloat(newValue.b);
+            })
+        );
+
+/*
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nunder 50% energy");
         // LowR
         auto LowRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
@@ -274,7 +374,17 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         auto LowBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onLowBChange);
         QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["LowhpB"].GetFloat(), 0.0f, 1.0f, LowBChange);
+*/
 
+        auto DefChange = CreateColorPickerButton(container->get_transform(), "over 50% energy", UnityEngine::Color(getConfig().config["DefhpR"].GetFloat(), getConfig().config["DefhpG"].GetFloat(), getConfig().config["DefhpB"].GetFloat()), il2cpp_utils::MakeDelegate<ColorChangeDelegate>(
+            classof(ColorChangeDelegate), container, +[](UnityEngine::GameObject* container, UnityEngine::Color newValue, GlobalNamespace::ColorChangeUIEventType eventType) {
+                getConfig().config["DefhpR"].SetFloat(newValue.r);
+                getConfig().config["DefhpG"].SetFloat(newValue.g);
+                getConfig().config["DefhpB"].SetFloat(newValue.b);
+            })
+        );
+
+        /*
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nover 50% energy");
         // DefR
         auto DefRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
@@ -288,7 +398,17 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         auto DefBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onDefBChange);
         QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["DefhpB"].GetFloat(), 0.0f, 1.0f, DefBChange);
-        
+        */
+
+       auto MidChange = CreateColorPickerButton(container->get_transform(), "over 70% energy", UnityEngine::Color(getConfig().config["MidhpR"].GetFloat(), getConfig().config["MidhpG"].GetFloat(), getConfig().config["MidhpB"].GetFloat()), il2cpp_utils::MakeDelegate<ColorChangeDelegate>(
+            classof(ColorChangeDelegate), container, +[](UnityEngine::GameObject* container, UnityEngine::Color newValue, GlobalNamespace::ColorChangeUIEventType eventType) {
+                getConfig().config["MidhpR"].SetFloat(newValue.r);
+                getConfig().config["MidhpG"].SetFloat(newValue.g);
+                getConfig().config["MidhpB"].SetFloat(newValue.b);
+            })
+        );
+
+        /*
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\nover 70% energy");
         // MidR
         auto MidRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
@@ -302,7 +422,17 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         auto MidBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onMidBChange);
         QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["MidhpB"].GetFloat(), 0.0f, 1.0f, MidBChange);
+        */
 
+       auto HeighChange = CreateColorPickerButton(container->get_transform(), "over 95% energy", UnityEngine::Color(getConfig().config["HeighhpR"].GetFloat(), getConfig().config["HeighhpG"].GetFloat(), getConfig().config["HeighhpB"].GetFloat()), il2cpp_utils::MakeDelegate<ColorChangeDelegate>(
+            classof(ColorChangeDelegate), container, +[](UnityEngine::GameObject* container, UnityEngine::Color newValue, GlobalNamespace::ColorChangeUIEventType eventType) {
+                getConfig().config["HeighhpR"].SetFloat(newValue.r);
+                getConfig().config["HeighhpG"].SetFloat(newValue.g);
+                getConfig().config["HeighhpB"].SetFloat(newValue.b);
+            })
+        );
+
+        /*
         QuestUI::BeatSaberUI::CreateText(container->get_transform(), "\n100% energy");
         // HeighR
         auto HeighRChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
@@ -316,6 +446,7 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         auto HeighBChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<float>*>(
                     classof(UnityEngine::Events::UnityAction_1<float>*), this, onHeighBChange);
         QuestUI::BeatSaberUI::CreateIncrementSetting(container->get_transform(), "   Blue", 1, 0.1, getConfig().config["HighhpB"].GetFloat(), 0.0f, 1.0f, HeighBChange);
+        */
     }
 }
 

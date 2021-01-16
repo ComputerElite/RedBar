@@ -55,53 +55,55 @@ MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEner
     }
 
     GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
-    
-/*
-0 = 255, 0
-0,25 = 255, 127,5 
-0,5 = 255, 255
 
-*/
-    if (energy < 0.15) {
-        if (!getConfig().config["AlwaysRainbow"].GetBool()) {
-            color.r = getConfig().config["DiehpR"].GetFloat();
-            color.g = getConfig().config["DiehpG"].GetFloat();
-            color.b = getConfig().config["DiehpB"].GetFloat();
-        }
-    } else if (energy < 0.5) {
-        if (!getConfig().config["AlwaysRainbow"].GetBool()) {
-            double fraction = (energy - 0.15f)*2.8571428f;
-            color.r = getConfig().config["DiehpR"].GetFloat() + (getConfig().config["LowhpR"].GetFloat() - getConfig().config["DiehpR"].GetFloat()) * fraction;
-            color.g = getConfig().config["DiehpG"].GetFloat() + (getConfig().config["LowhpG"].GetFloat() - getConfig().config["DiehpG"].GetFloat()) * fraction;
-            color.b = getConfig().config["DiehpB"].GetFloat() + (getConfig().config["LowhpB"].GetFloat() - getConfig().config["DiehpB"].GetFloat()) * fraction;
-        }
-    } else if (energy > 0.5 && energy < 0.7) {
-        if (!getConfig().config["AlwaysRainbow"].GetBool()) {
-            double fraction = (energy - 0.5f)*5.0f;
-            color.r = getConfig().config["LowhpR"].GetFloat() + (getConfig().config["DefhpR"].GetFloat() - getConfig().config["LowhpR"].GetFloat()) * fraction;
-            color.g = getConfig().config["LowhpG"].GetFloat() + (getConfig().config["DefhpG"].GetFloat() - getConfig().config["LowhpG"].GetFloat()) * fraction;
-            color.b = getConfig().config["LowhpB"].GetFloat() + (getConfig().config["DefhpB"].GetFloat() - getConfig().config["LowhpB"].GetFloat()) * fraction;
-        }
-    } else if (energy == 1.0) {
-        if (!getConfig().config["Rainbow"].GetBool()) {
-            color.r = getConfig().config["HighhpR"].GetFloat();
-            color.g = getConfig().config["HighhpG"].GetFloat();
-            color.b = getConfig().config["HighhpB"].GetFloat();
-        }
-    } else if (energy > 0.7) {
-        if (!getConfig().config["AlwaysRainbow"].GetBool()) {
-            double fraction = (energy - 0.7f)*3.3333333f;
-            color.r = getConfig().config["DefhpR"].GetFloat() + (getConfig().config["HighhpR"].GetFloat() - getConfig().config["DefhpR"].GetFloat()) * fraction;
-            color.g = getConfig().config["DefhpG"].GetFloat() + (getConfig().config["HighhpG"].GetFloat() - getConfig().config["DefhpG"].GetFloat()) * fraction;
-            color.b = getConfig().config["DefhpB"].GetFloat() + (getConfig().config["HighhpB"].GetFloat() - getConfig().config["DefhpB"].GetFloat()) * fraction;
+    if(getConfig().config["FullFade"].GetBool()) {
+        double fraction = energy;
+        color.r = getConfig().config["DiehpR"].GetFloat() + (getConfig().config["HighhpR"].GetFloat() - getConfig().config["DiehpR"].GetFloat()) * fraction;
+        color.g = getConfig().config["DiehpG"].GetFloat() + (getConfig().config["HighhpG"].GetFloat() - getConfig().config["DiehpG"].GetFloat()) * fraction;
+        color.b = getConfig().config["DiehpB"].GetFloat() + (getConfig().config["HighhpB"].GetFloat() - getConfig().config["DiehpB"].GetFloat()) * fraction;
+    } else {
+        if (energy < 0.15) {
+            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+                color.r = getConfig().config["DiehpR"].GetFloat();
+                color.g = getConfig().config["DiehpG"].GetFloat();
+                color.b = getConfig().config["DiehpB"].GetFloat();
+            }
+        } else if (energy < 0.5) {
+            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+                double fraction = (energy - 0.15f)*2.8571428f;
+                color.r = getConfig().config["DiehpR"].GetFloat() + (getConfig().config["LowhpR"].GetFloat() - getConfig().config["DiehpR"].GetFloat()) * fraction;
+                color.g = getConfig().config["DiehpG"].GetFloat() + (getConfig().config["LowhpG"].GetFloat() - getConfig().config["DiehpG"].GetFloat()) * fraction;
+                color.b = getConfig().config["DiehpB"].GetFloat() + (getConfig().config["LowhpB"].GetFloat() - getConfig().config["DiehpB"].GetFloat()) * fraction;
+            }
+        } else if (energy > 0.5 && energy < 0.7) {
+            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+                double fraction = (energy - 0.5f)*5.0f;
+                color.r = getConfig().config["LowhpR"].GetFloat() + (getConfig().config["DefhpR"].GetFloat() - getConfig().config["LowhpR"].GetFloat()) * fraction;
+                color.g = getConfig().config["LowhpG"].GetFloat() + (getConfig().config["DefhpG"].GetFloat() - getConfig().config["LowhpG"].GetFloat()) * fraction;
+                color.b = getConfig().config["LowhpB"].GetFloat() + (getConfig().config["DefhpB"].GetFloat() - getConfig().config["LowhpB"].GetFloat()) * fraction;
+            }
+        } else if (energy > 0.95) {
+            if (!getConfig().config["Rainbow"].GetBool()) {
+                double fraction = (energy - 0.95f)*20.0f;
+                color.r = getConfig().config["MidhpR"].GetFloat() + (getConfig().config["HighhpR"].GetFloat() - getConfig().config["MidhpR"].GetFloat()) * fraction;
+                color.g = getConfig().config["MidhpG"].GetFloat() + (getConfig().config["HighhpG"].GetFloat() - getConfig().config["MidhpG"].GetFloat()) * fraction;
+                color.b = getConfig().config["MidhpB"].GetFloat() + (getConfig().config["HighhpB"].GetFloat() - getConfig().config["MidhpB"].GetFloat()) * fraction;
+            }
+        } else if (energy > 0.7) {
+            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+                double fraction = (energy - 0.7f)*3.3333333f;
+                color.r = getConfig().config["DefhpR"].GetFloat() + (getConfig().config["MidhpR"].GetFloat() - getConfig().config["DefhpR"].GetFloat()) * fraction;
+                color.g = getConfig().config["DefhpG"].GetFloat() + (getConfig().config["MidhpG"].GetFloat() - getConfig().config["DefhpG"].GetFloat()) * fraction;
+                color.b = getConfig().config["DefhpB"].GetFloat() + (getConfig().config["MidhpB"].GetFloat() - getConfig().config["DefhpB"].GetFloat()) * fraction;
+            }
         }
     }
     
     if (energy > 0.85 && getConfig().config["Fadeout"].GetBool()) {
-            color.a = (6.667+(-6.667*energy))*getConfig().config["Alpha"].GetFloat();
-        } else {
-            color.a = getConfig().config["Alpha"].GetFloat();
-        }
+        color.a = (6.667+(-6.667*energy))*getConfig().config["Alpha"].GetFloat();
+    } else {
+        color.a = getConfig().config["Alpha"].GetFloat();
+    }
     
     energyBar->set_color(color);
 }
@@ -156,9 +158,9 @@ MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self
 
 void createDefaultConfig()  {
     
-    if(getConfig().config.HasMember("Rainbow") && !getConfig().config.HasMember("RtGFade")) {
+    if(getConfig().config.HasMember("Rainbow") && !getConfig().config.HasMember("FullFade")) {
         rapidjson::Document::AllocatorType& allocator = getConfig().config.GetAllocator();
-        getConfig().config.AddMember("RtGFade", rapidjson::Value().SetBool(false), allocator);
+        getConfig().config.AddMember("FullFade", rapidjson::Value().SetBool(false), allocator);
     }
     if(getConfig().config.HasMember("Rainbow")) {return;}
 
@@ -174,7 +176,7 @@ void createDefaultConfig()  {
     getConfig().config.AddMember("Rainbow", rapidjson::Value().SetBool(true), allocator);
     getConfig().config.AddMember("AlwaysRainbow", rapidjson::Value().SetBool(false), allocator);
     getConfig().config.AddMember("Fadeout", rapidjson::Value().SetBool(false), allocator);
-    getConfig().config.AddMember("RtGFade", rapidjson::Value().SetBool(false), allocator);
+    getConfig().config.AddMember("FullFade", rapidjson::Value().SetBool(false), allocator);
     getConfig().config.AddMember("Alpha", rapidjson::Value().SetFloat(1.0), allocator);
     getConfig().config.AddMember("DiehpR", rapidjson::Value().SetFloat(1.0), allocator);
     getConfig().config.AddMember("DiehpG", rapidjson::Value().SetFloat(0.0), allocator);
