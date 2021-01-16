@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "id": "Redbar",
   "name": "Redbar",
@@ -44,4 +45,52 @@
       }
     }
   ]
+=======
+{
+  "id": "Redbar",
+  "name": "Redbar",
+  "version": "1.3.0",
+  "author": "ComputerElite",
+  "description": [
+    "Changes the Color of the energy bar according to your Health. Originally made by Miniwa"
+  ],
+  "category": "Gameplay",
+  "gameVersion": "1.13.0",
+  "platform": "Quest",
+  "components": [
+    {
+      "type": "HookMod",
+      "installAction": {
+        "installLibraryFile": "libRedBar_0_1_0.so"
+      },
+      "uninstallAction": {
+        "removeLibraryFile": "libRedBar_0_1_0.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libbeatsaber-hook_1_0_9.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libcustom-types.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libquestui.so"
+      }
+    },
+    {
+      "type": "HookModLibrary",
+      "installAction": {
+        "installLibraryFile": "libcodegen_0_5_3.so"
+      }
+    }
+  ]
+>>>>>>> 563ba0a5a0779655fd66c310aa8ddd4fd616c422
 }
