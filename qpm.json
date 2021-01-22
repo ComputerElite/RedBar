@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "sharedDir": "shared",
   "dependenciesDir": "extern",
@@ -36,43 +35,4 @@
     }
   ],
   "additionalData": {}
-=======
-{
-  "sharedDir": "shared",
-  "dependenciesDir": "extern",
-  "info": {
-    "name": "Red Bar",
-    "id": "RedBar",
-    "version": "0.1.0",
-    "url": null,
-    "additionalData": {}
-  },
-  "dependencies": [
-    {
-      "id": "beatsaber-hook",
-      "versionRange": "*",
-      "additionalData": {
-        "extraFiles": [
-          "src/inline-hook"
-        ]
-      }
-    },
-    {
-      "id": "codegen",
-      "versionRange": "*",
-      "additionalData": {}
-    },
-    {
-      "id": "questui",
-      "versionRange": "*",
-      "additionalData": {}
-    },
-    {
-      "id": "custom-types",
-      "versionRange": "*",
-      "additionalData": {}
-    }
-  ],
-  "additionalData": {}
->>>>>>> 563ba0a5a0779655fd66c310aa8ddd4fd616c422
 }
