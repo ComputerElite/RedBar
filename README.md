@@ -1,6 +1,12 @@
 # Red Bar
 
-Changes the color of the health bar according to your health
+Changes the color of the health bar according to your health.
+
+**Features:**
+- fading between colors
+- rainbow health bar
+- multiple colors for different health values
+- fadeout of the health bar
 
 ## Credits
 
