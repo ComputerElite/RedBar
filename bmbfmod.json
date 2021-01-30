@@ -18,30 +18,6 @@
       "uninstallAction": {
         "removeLibraryFile": "libRedBar_0_1_0.so"
       }
-    },
-    {
-      "type": "HookModLibrary",
-      "installAction": {
-        "installLibraryFile": "libbeatsaber-hook_1_0_10.so"
-      }
-    },
-    {
-      "type": "HookModLibrary",
-      "installAction": {
-        "installLibraryFile": "libcustom-types.so"
-      }
-    },
-    {
-      "type": "HookModLibrary",
-      "installAction": {
-        "installLibraryFile": "libquestui.so"
-      }
-    },
-    {
-      "type": "HookModLibrary",
-      "installAction": {
-        "installLibraryFile": "libcodegen_0_6_1.so"
-      }
     }
   ]
 }

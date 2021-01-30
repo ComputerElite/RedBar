@@ -8,4 +8,4 @@ if (-not ($PSVersionTable.PSEdition -eq "Core")) {
 
 & $buildScript NDK_PROJECT_PATH=$PSScriptRoot APP_BUILD_SCRIPT=$PSScriptRoot/Android.mk NDK_APPLICATION_MK=$PSScriptRoot/Application.mk
 
-Compress-Archive -Path "./libs/arm64-v8a/libRedBar_0_1_0.so", "./libs/arm64-v8a/libquestui.so", "./libs/arm64-v8a/libcustom-types.so", "./libs/arm64-v8a/libbeatsaber-hook_1_0_10.so", "./libs/arm64-v8a/libcodegen_0_6_1.so", "./bmbfmod.json" -DestinationPath "./RedBar_v1.3.0.zip" -Update
+Compress-Archive -Path "./libs/arm64-v8a/libRedBar_0_1_0.so", "./bmbfmod.json" -DestinationPath "./RedBar_v1.3.0.zip" -Update
