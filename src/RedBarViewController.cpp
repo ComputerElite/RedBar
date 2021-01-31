@@ -323,8 +323,8 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         // FullFade
         auto FadeChange = il2cpp_utils::MakeDelegate<UnityEngine::Events::UnityAction_1<bool>*>(
                    classof(UnityEngine::Events::UnityAction_1<bool>*), this, onFadeChange);
-        UnityEngine::UI::Toggle* FullFade = QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Use fade between 15% and 100% colors", getConfig().config["FullFade"].GetBool(), FadeChange);
-        QuestUI::BeatSaberUI::AddHoverHint(FullFade->get_gameObject(), "Fades between the 15% and 100% Color");
+        UnityEngine::UI::Toggle* FullFade = QuestUI::BeatSaberUI::CreateToggle(container->get_transform(), "Use fade between 15% and 95% colors", getConfig().config["FullFade"].GetBool(), FadeChange);
+        QuestUI::BeatSaberUI::AddHoverHint(FullFade->get_gameObject(), "Fades between the 15% and 95% Color");
 
 
         auto DieChange = CreateColorPickerButton(container->get_transform(), "under 15% energy", UnityEngine::Color(getConfig().config["DiehpR"].GetFloat(), getConfig().config["DiehpG"].GetFloat(), getConfig().config["DiehpB"].GetFloat()), il2cpp_utils::MakeDelegate<ColorChangeDelegate>(

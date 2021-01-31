@@ -1,10 +1,22 @@
 #include "main.hpp"
 #include "GlobalNamespace/GameEnergyUIPanel.hpp"
 #include "GlobalNamespace/GameEnergyCounter.hpp"
+#include "GlobalNamespace/IDifficultyBeatmap.hpp"
+#include "GlobalNamespace/OverrideEnvironmentSettings.hpp"
+#include "GlobalNamespace/ColorScheme.hpp"
+#include "GlobalNamespace/GameplayModifiers.hpp"
+#include "GlobalNamespace/PlayerSpecificSettings.hpp"
+#include "GlobalNamespace/PracticeSettings.hpp"
+#include "GlobalNamespace/StandardLevelScenesTransitionSetupDataSO.hpp"
+#include "GlobalNamespace/MultiplayerLevelScenesTransitionSetupDataSO.hpp"
+#include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
+#include "GlobalNamespace/BeatmapDifficulty.hpp"
+#include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
 
 #include "beatsaber-hook/shared/config/config-utils.hpp"
 
 #include "UnityEngine/UI/Image.hpp"
+#include "UnityEngine/SceneManagement/Scene.hpp"
 
 #include "RedBarViewController.hpp"
 
@@ -143,7 +155,7 @@ float * Wheel(int WheelPos) {
 MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self) {
     getLogger().info("LateUpdate RedBar");
     GameEnergyCounter_LateUpdate(self);
-    if ((energyBarMaterialStore != nullptr && energyy == 1.0 && getConfig().config["Rainbow"].GetBool()) || (energyBarMaterialStore != nullptr && getConfig().config["AlwaysRainbow"].GetBool())) {
+    if ((energyBarMaterialStore != nullptr && energyBarStore != nullptr && energyy == 1.0 && getConfig().config["Rainbow"].GetBool()) || (energyBarMaterialStore != nullptr && energyBarStore != nullptr && getConfig().config["AlwaysRainbow"].GetBool())) {
         float* Heck = Wheel(pos);
         UnityEngine::Color color;
         color.a = 1.0;
@@ -158,7 +170,12 @@ MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self
     }
 }
 
-    
+MAKE_HOOK_OFFSETLESS(SceneManager_ActiveSceneChanged, void, UnityEngine::SceneManagement::Scene previousActiveScene, UnityEngine::SceneManagement::Scene nextActiveScene) {
+    SceneManager_ActiveSceneChanged(previousActiveScene, nextActiveScene);
+    energyBarStore = nullptr;
+    energyBarMaterialStore = nullptr;
+}
+
 
 void createDefaultConfig()  {
     
@@ -223,5 +240,6 @@ extern "C" void load() {
     // Install our hooks
     INSTALL_HOOK_OFFSETLESS(logger, GameEnergyUIPanel_HandleGameEnergyDidChange, il2cpp_utils::FindMethodUnsafe("", "GameEnergyUIPanel", "HandleGameEnergyDidChange", 1));
     INSTALL_HOOK_OFFSETLESS(logger, GameEnergyCounter_LateUpdate, il2cpp_utils::FindMethodUnsafe("", "GameEnergyCounter", "LateUpdate", 0));
+    INSTALL_HOOK_OFFSETLESS(logger, SceneManager_ActiveSceneChanged, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "Internal_ActiveSceneChanged", 2));
     getLogger().info("Installed all hooks!");
 }
