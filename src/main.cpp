@@ -47,7 +47,7 @@ Logger& getLogger() {
 
 MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
     
-    getLogger().info("Energy change RedBar");
+    //getLogger().info("Energy change RedBar");
     GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
 
     UnityEngine::Color color;
@@ -153,7 +153,7 @@ float * Wheel(int WheelPos) {
 
 
 MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self) {
-    getLogger().info("LateUpdate RedBar");
+    //getLogger().info("LateUpdate RedBar");
     GameEnergyCounter_LateUpdate(self);
     if ((energyBarMaterialStore != nullptr && energyBarStore != nullptr && energyy == 1.0 && getConfig().config["Rainbow"].GetBool()) || (energyBarMaterialStore != nullptr && energyBarStore != nullptr && getConfig().config["AlwaysRainbow"].GetBool())) {
         float* Heck = Wheel(pos);
