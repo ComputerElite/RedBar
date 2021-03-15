@@ -44,7 +44,7 @@ void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarc
         QuestUI::BeatSaberUI::AddHoverHint(AddConfigValueToggle(container->get_transform(), getModConfig().Rainbow)->get_gameObject(), "overrides Fadeout");
 
         // AlwaysRainbow
-        QuestUI::BeatSaberUI::AddHoverHint(AddConfigValueToggle(container->get_transform(), getModConfig().Rainbow)->get_gameObject(), "overrides Fadeout, Fade red to green and Rainbow");
+        QuestUI::BeatSaberUI::AddHoverHint(AddConfigValueToggle(container->get_transform(), getModConfig().AlwaysRainbow)->get_gameObject(), "overrides Fadeout, Fade red to green and Rainbow");
 
         // Fadeout
         AddConfigValueToggle(container->get_transform(), getModConfig().Fadeout);

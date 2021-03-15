@@ -13,10 +13,8 @@
 #include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
 #include "GlobalNamespace/BeatmapDifficulty.hpp"
 #include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
-#include "UnityEngine/Color.hpp"
 
 #include "beatsaber-hook/shared/config/config-utils.hpp"
-#include "config-utils/shared/config-utils.hpp"
 
 #include "UnityEngine/UI/Image.hpp"
 #include "UnityEngine/SceneManagement/Scene.hpp"
