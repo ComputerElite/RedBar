@@ -1,0 +1,14 @@
+{
+  "_QPVersion": "0.1.0",
+  "id": "RedBar",
+  "name": "RedBar",
+  "version": "1.3.2",
+  "author": "ComputerElite",
+  "packageId": "com.beatgames.beatsaber",
+  "packageVersion": "1.13.5",
+  "modFiles": [
+    "libPlay3rdPer.so"
+  ],
+  "dependencies": [],
+  "fileCopies": []
+}

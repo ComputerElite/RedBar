@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "ModConfig.hpp"
 #include "GlobalNamespace/GameEnergyUIPanel.hpp"
 #include "GlobalNamespace/GameEnergyCounter.hpp"
 #include "GlobalNamespace/IDifficultyBeatmap.hpp"
@@ -12,8 +13,10 @@
 #include "GlobalNamespace/IPreviewBeatmapLevel.hpp"
 #include "GlobalNamespace/BeatmapDifficulty.hpp"
 #include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
+#include "UnityEngine/Color.hpp"
 
 #include "beatsaber-hook/shared/config/config-utils.hpp"
+#include "config-utils/shared/config-utils.hpp"
 
 #include "UnityEngine/UI/Image.hpp"
 #include "UnityEngine/SceneManagement/Scene.hpp"
@@ -28,11 +31,7 @@ using namespace UnityEngine;
 using namespace QuestUI;
 
 static ModInfo modInfo;
-Configuration& getConfig() {
-    static Configuration config(modInfo);
-    config.Load();
-    return config;
-}
+DEFINE_CONFIG(ModConfig);
 
 Logger& getLogger() {
     static Logger* logger = new Logger(modInfo, LoggerOptions(false, true));
@@ -49,13 +48,10 @@ MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEner
     
     //getLogger().info("Energy change RedBar");
     GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
-
     UnityEngine::Color color;
 
-    color.a = getConfig().config["Alpha"].GetFloat();
-    color.r = getConfig().config["DefhpR"].GetFloat();
-    color.g = getConfig().config["DefhpG"].GetFloat();
-    color.b = getConfig().config["DefhpB"].GetFloat();  
+    color = getModConfig().Defhp.GetValue();
+    color.a = getModConfig().Alpha.GetValue();
     
     UnityEngine::UI::Image* energyBar = self->energyBar;
 
@@ -70,57 +66,55 @@ MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEner
         energyy = energy;
     }
 
-    GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
-
-    if(getConfig().config["FullFade"].GetBool()) {
+    if(getModConfig().FullFade.GetValue()) {
         double fraction = energy;
-        color.r = getConfig().config["DiehpR"].GetFloat() + (getConfig().config["HighhpR"].GetFloat() - getConfig().config["DiehpR"].GetFloat()) * fraction;
-        color.g = getConfig().config["DiehpG"].GetFloat() + (getConfig().config["HighhpG"].GetFloat() - getConfig().config["DiehpG"].GetFloat()) * fraction;
-        color.b = getConfig().config["DiehpB"].GetFloat() + (getConfig().config["HighhpB"].GetFloat() - getConfig().config["DiehpB"].GetFloat()) * fraction;
+        color.r = getModConfig().Diehp.GetValue().r + (getModConfig().Highhp.GetValue().r - getModConfig().Diehp.GetValue().r) * fraction;
+        color.g = getModConfig().Diehp.GetValue().g + (getModConfig().Highhp.GetValue().g - getModConfig().Diehp.GetValue().g) * fraction;
+        color.b = getModConfig().Diehp.GetValue().b + (getModConfig().Highhp.GetValue().b - getModConfig().Diehp.GetValue().b) * fraction;
     } else {
         if (energy < 0.15) {
-            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
-                color.r = getConfig().config["DiehpR"].GetFloat();
-                color.g = getConfig().config["DiehpG"].GetFloat();
-                color.b = getConfig().config["DiehpB"].GetFloat();
+            if (!getModConfig().AlwaysRainbow.GetValue()) {
+                color.r = getModConfig().Diehp.GetValue().r;
+                color.g = getModConfig().Diehp.GetValue().g;
+                color.b = getModConfig().Diehp.GetValue().b;
             }
         } else if (energy < 0.5) {
-            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+            if (!getModConfig().AlwaysRainbow.GetValue()) {
                 double fraction = (energy - 0.15f)*2.8571428f;
-                color.r = getConfig().config["DiehpR"].GetFloat() + (getConfig().config["LowhpR"].GetFloat() - getConfig().config["DiehpR"].GetFloat()) * fraction;
-                color.g = getConfig().config["DiehpG"].GetFloat() + (getConfig().config["LowhpG"].GetFloat() - getConfig().config["DiehpG"].GetFloat()) * fraction;
-                color.b = getConfig().config["DiehpB"].GetFloat() + (getConfig().config["LowhpB"].GetFloat() - getConfig().config["DiehpB"].GetFloat()) * fraction;
+                color.r = getModConfig().Diehp.GetValue().r + (getModConfig().Lowhp.GetValue().r - getModConfig().Diehp.GetValue().r) * fraction;
+                color.g = getModConfig().Diehp.GetValue().g + (getModConfig().Lowhp.GetValue().g - getModConfig().Diehp.GetValue().g) * fraction;
+                color.b = getModConfig().Diehp.GetValue().b + (getModConfig().Lowhp.GetValue().b - getModConfig().Diehp.GetValue().b) * fraction;
             }
         } else if (energy > 0.5 && energy < 0.7) {
-            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+            if (!getModConfig().AlwaysRainbow.GetValue()) {
                 double fraction = (energy - 0.5f)*5.0f;
-                color.r = getConfig().config["LowhpR"].GetFloat() + (getConfig().config["DefhpR"].GetFloat() - getConfig().config["LowhpR"].GetFloat()) * fraction;
-                color.g = getConfig().config["LowhpG"].GetFloat() + (getConfig().config["DefhpG"].GetFloat() - getConfig().config["LowhpG"].GetFloat()) * fraction;
-                color.b = getConfig().config["LowhpB"].GetFloat() + (getConfig().config["DefhpB"].GetFloat() - getConfig().config["LowhpB"].GetFloat()) * fraction;
+                color.r = getModConfig().Lowhp.GetValue().r + (getModConfig().Defhp.GetValue().r - getModConfig().Lowhp.GetValue().r) * fraction;
+                color.g = getModConfig().Lowhp.GetValue().g + (getModConfig().Defhp.GetValue().g - getModConfig().Lowhp.GetValue().g) * fraction;
+                color.b = getModConfig().Lowhp.GetValue().b + (getModConfig().Defhp.GetValue().b - getModConfig().Lowhp.GetValue().b) * fraction;
             }
         } else if (energy > 0.95) {
-            if (!getConfig().config["Rainbow"].GetBool()) {
+            if (!getModConfig().Rainbow.GetValue()) {
                 double fraction = (energy - 0.95f)*20.0f;
-                color.r = getConfig().config["MidhpR"].GetFloat() + (getConfig().config["HighhpR"].GetFloat() - getConfig().config["MidhpR"].GetFloat()) * fraction;
-                color.g = getConfig().config["MidhpG"].GetFloat() + (getConfig().config["HighhpG"].GetFloat() - getConfig().config["MidhpG"].GetFloat()) * fraction;
-                color.b = getConfig().config["MidhpB"].GetFloat() + (getConfig().config["HighhpB"].GetFloat() - getConfig().config["MidhpB"].GetFloat()) * fraction;
+                color.r = getModConfig().Midhp.GetValue().r + (getModConfig().Highhp.GetValue().r - getModConfig().Midhp.GetValue().r) * fraction;
+                color.g = getModConfig().Midhp.GetValue().g + (getModConfig().Highhp.GetValue().g - getModConfig().Midhp.GetValue().g) * fraction;
+                color.b = getModConfig().Midhp.GetValue().b + (getModConfig().Highhp.GetValue().b - getModConfig().Midhp.GetValue().b) * fraction;
             }
         } else if (energy > 0.7) {
-            if (!getConfig().config["AlwaysRainbow"].GetBool()) {
+            if (!getModConfig().AlwaysRainbow.GetValue()) {
                 double fraction = (energy - 0.7f)*3.3333333f;
-                color.r = getConfig().config["DefhpR"].GetFloat() + (getConfig().config["MidhpR"].GetFloat() - getConfig().config["DefhpR"].GetFloat()) * fraction;
-                color.g = getConfig().config["DefhpG"].GetFloat() + (getConfig().config["MidhpG"].GetFloat() - getConfig().config["DefhpG"].GetFloat()) * fraction;
-                color.b = getConfig().config["DefhpB"].GetFloat() + (getConfig().config["MidhpB"].GetFloat() - getConfig().config["DefhpB"].GetFloat()) * fraction;
+                color.r = getModConfig().Defhp.GetValue().r + (getModConfig().Midhp.GetValue().r - getModConfig().Defhp.GetValue().r) * fraction;
+                color.g = getModConfig().Defhp.GetValue().g + (getModConfig().Midhp.GetValue().g - getModConfig().Defhp.GetValue().g) * fraction;
+                color.b = getModConfig().Defhp.GetValue().b + (getModConfig().Midhp.GetValue().b - getModConfig().Defhp.GetValue().b) * fraction;
             }
         }
     }
     
-    if (energy > 0.85 && getConfig().config["Fadeout"].GetBool()) {
-        color.a = (6.667+(-6.667*energy))*getConfig().config["Alpha"].GetFloat();
+    if (energy > 0.85 && getModConfig().Fadeout.GetValue()) {
+        color.a = (6.667+(-6.667*energy))*getModConfig().Alpha.GetValue();
     } else {
-        color.a = getConfig().config["Alpha"].GetFloat();
+        color.a = getModConfig().Alpha.GetValue();
     }
-    
+    //getLogger().info("r: " + std::to_string(color.r) + " g: " + std::to_string(color.g) + " b: " + std::to_string(color.g) + " a: " + std::to_string(color.a));
     energyBar->set_color(color);
 }
 
@@ -155,7 +149,7 @@ float * Wheel(int WheelPos) {
 MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self) {
     //getLogger().info("LateUpdate RedBar");
     GameEnergyCounter_LateUpdate(self);
-    if ((energyBarMaterialStore != nullptr && energyBarStore != nullptr && energyy == 1.0 && getConfig().config["Rainbow"].GetBool()) || (energyBarMaterialStore != nullptr && energyBarStore != nullptr && getConfig().config["AlwaysRainbow"].GetBool())) {
+    if ((energyBarMaterialStore != nullptr && energyBarStore != nullptr && energyy == 1.0 && getModConfig().Rainbow.GetValue()) || (energyBarMaterialStore != nullptr && energyBarStore != nullptr && getModConfig().AlwaysRainbow.GetValue())) {
         float* Heck = Wheel(pos);
         UnityEngine::Color color;
         color.a = 1.0;
@@ -176,61 +170,18 @@ MAKE_HOOK_OFFSETLESS(SceneManager_ActiveSceneChanged, void, UnityEngine::SceneMa
     energyBarMaterialStore = nullptr;
 }
 
-
-void createDefaultConfig()  {
-    
-    if(getConfig().config.HasMember("Rainbow") && !getConfig().config.HasMember("FullFade")) {
-        rapidjson::Document::AllocatorType& allocator = getConfig().config.GetAllocator();
-        getConfig().config.AddMember("FullFade", rapidjson::Value().SetBool(false), allocator);
-    }
-    if(getConfig().config.HasMember("Rainbow")) {return;}
-
-    // Add all the default options
-    getConfig().config.RemoveAllMembers(); // Empty the config - it should already be empty but just to be sure
-    getConfig().config.SetObject(); // Set the base of the config to a value that can contain keys
-
-    // Get what is used to allocate memory in the config file
-    rapidjson::Document::AllocatorType& allocator = getConfig().config.GetAllocator();
-
-    // Add a member to the config, using the allocator
-
-    getConfig().config.AddMember("Rainbow", rapidjson::Value().SetBool(true), allocator);
-    getConfig().config.AddMember("AlwaysRainbow", rapidjson::Value().SetBool(false), allocator);
-    getConfig().config.AddMember("Fadeout", rapidjson::Value().SetBool(false), allocator);
-    getConfig().config.AddMember("FullFade", rapidjson::Value().SetBool(false), allocator);
-    getConfig().config.AddMember("Alpha", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("DiehpR", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("DiehpG", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("DiehpB", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("LowhpR", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("LowhpG", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("LowhpB", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("MidhpR", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("MidhpG", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("MidhpB", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("HighhpR", rapidjson::Value().SetFloat(0.0), allocator);
-    getConfig().config.AddMember("HighhpG", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("HighhpB", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("DefhpR", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("DefhpG", rapidjson::Value().SetFloat(1.0), allocator);
-    getConfig().config.AddMember("DefhpB", rapidjson::Value().SetFloat(1.0), allocator);
-
-    getConfig().Write(); // Write the config back to disk
-}
-
 extern "C" void setup(ModInfo& info) {
     info.id = ID;
     info.version = VERSION;
     modInfo = info;
 	
-    getConfig().Load(); // Load the config file
-    createDefaultConfig();
     getLogger().info("Completed setup!");
 }
 
 extern "C" void load() {
     getLogger().info("Installing hooks...");
     il2cpp_functions::Init();
+    getModConfig().Init(modInfo);
     QuestUI::Init();
 
     LoggerContextObject logger = getLogger().WithContext("load");
