@@ -7,7 +7,7 @@
     "Changes the Color of the energy bar according to your Health. Originally made by Miniwa"
   ],
   "category": "Gameplay",
-  "gameVersion": "1.13.2",
+  "gameVersion": "1.14.0",
   "platform": "Quest",
   "components": [
     {
