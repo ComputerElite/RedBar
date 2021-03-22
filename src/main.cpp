@@ -41,11 +41,7 @@ Logger& getLogger() {
     float energyy = 0.0;
     int pos = 0;
 
-
-MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
-    
-    //getLogger().info("Energy change RedBar");
-    GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
+void SetColor(GameEnergyUIPanel* self, float energy) {
     UnityEngine::Color color;
 
     color = getModConfig().Defhp.GetValue();
@@ -115,6 +111,23 @@ MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEner
     //getLogger().info("r: " + std::to_string(color.r) + " g: " + std::to_string(color.g) + " b: " + std::to_string(color.g) + " a: " + std::to_string(color.a));
     energyBar->set_color(color);
 }
+
+
+MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_Start, void, GameEnergyUIPanel* self) {
+    //getLogger().info("LateUpdate RedBar");
+    GameEnergyUIPanel_Start(self);
+    SetColor(self, 0.4f);
+}
+
+MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
+    
+    
+    GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
+    getLogger().info(std::to_string(energy));
+    SetColor(self, energy);
+}
+
+
 
 float * Wheel(int WheelPos) {
   static int c[3];
@@ -189,6 +202,7 @@ extern "C" void load() {
     // Install our hooks
     INSTALL_HOOK_OFFSETLESS(logger, GameEnergyUIPanel_HandleGameEnergyDidChange, il2cpp_utils::FindMethodUnsafe("", "GameEnergyUIPanel", "HandleGameEnergyDidChange", 1));
     INSTALL_HOOK_OFFSETLESS(logger, GameEnergyCounter_LateUpdate, il2cpp_utils::FindMethodUnsafe("", "GameEnergyCounter", "LateUpdate", 0));
+    INSTALL_HOOK_OFFSETLESS(logger, GameEnergyUIPanel_Start, il2cpp_utils::FindMethodUnsafe("", "GameEnergyUIPanel", "Start", 0));
     INSTALL_HOOK_OFFSETLESS(logger, SceneManager_ActiveSceneChanged, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "Internal_ActiveSceneChanged", 2));
     getLogger().info("Installed all hooks!");
 }
