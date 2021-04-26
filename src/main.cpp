@@ -196,9 +196,7 @@ extern "C" void load() {
     QuestUI::Init();
 
     LoggerContextObject logger = getLogger().WithContext("load");
-    custom_types::Register::RegisterType<RedBar::RedBarViewController>();
-    // Register our mod settings menu
-    QuestUI::Register::RegisterModSettingsViewController<RedBar::RedBarViewController*>(modInfo);
+    QuestUI::Register::RegisterModSettingsViewController(modInfo, DidActivate);
     // Install our hooks
     INSTALL_HOOK_OFFSETLESS(logger, GameEnergyUIPanel_HandleGameEnergyDidChange, il2cpp_utils::FindMethodUnsafe("", "GameEnergyUIPanel", "HandleGameEnergyDidChange", 1));
     INSTALL_HOOK_OFFSETLESS(logger, GameEnergyCounter_LateUpdate, il2cpp_utils::FindMethodUnsafe("", "GameEnergyCounter", "LateUpdate", 0));

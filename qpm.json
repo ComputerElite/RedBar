@@ -32,6 +32,11 @@
       "id": "custom-types",
       "versionRange": "*",
       "additionalData": {}
+    },
+    {
+      "id": "config-utils",
+      "versionRange": "*",
+      "additionalData": {}
     }
   ],
   "additionalData": {}

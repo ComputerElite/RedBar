@@ -32,14 +32,14 @@ using namespace UnityEngine;
 using namespace UnityEngine::UI;
 using namespace UnityEngine::Events;
 using namespace HMUI;
-using namespace RedBar;
+//using namespace RedBar;
 
-DEFINE_CLASS(RedBarViewController);
+//DEFINE_CLASS(RedBarViewController);
 
-void RedBarViewController::DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling){
+void DidActivate(ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling){
     if(firstActivation) {
-        get_gameObject()->AddComponent<Touchable*>();
-        GameObject* container = BeatSaberUI::CreateScrollableSettingsContainer(get_transform());
+        self->get_gameObject()->AddComponent<Touchable*>();
+        GameObject* container = BeatSaberUI::CreateScrollableSettingsContainer(self->get_transform());
 
         QuestUI::BeatSaberUI::AddHoverHint(AddConfigValueToggle(container->get_transform(), getModConfig().Rainbow)->get_gameObject(), "overrides Fadeout");
 
