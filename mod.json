@@ -5,7 +5,7 @@
   "version": "1.4.0",
   "author": "ComputerElite",
   "packageId": "com.beatgames.beatsaber",
-  "packageVersion": "1.16.1",
+  "packageVersion": "1.16.2",
   "modFiles": [
     "libRedBar.so"
   ],
