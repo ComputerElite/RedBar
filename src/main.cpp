@@ -14,10 +14,16 @@
 #include "GlobalNamespace/BeatmapDifficulty.hpp"
 #include "GlobalNamespace/BeatmapCharacteristicSO.hpp"
 
-#include "beatsaber-hook/shared/config/config-utils.hpp"
+#include "beatsaber-hook/shared/utils/typedefs.h"
+#include "beatsaber-hook/shared/utils/il2cpp-utils.hpp"
+#include "beatsaber-hook/shared/utils/logging.hpp"
+#include "beatsaber-hook/shared/utils/utils.h"
+#include "beatsaber-hook/shared/utils/hooking.hpp"
+#include "beatsaber-hook/shared/utils/il2cpp-type-check.hpp"
 
 #include "UnityEngine/UI/Image.hpp"
 #include "UnityEngine/SceneManagement/Scene.hpp"
+#include "UnityEngine/SceneManagement/SceneManager.hpp"
 
 #include "RedBarViewController.hpp"
 
@@ -113,17 +119,15 @@ void SetColor(GameEnergyUIPanel* self, float energy) {
 }
 
 
-MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_Start, void, GameEnergyUIPanel* self) {
+MAKE_HOOK_MATCH(GameEnergyUIPanel_Start, &GameEnergyUIPanel::Start, void, GameEnergyUIPanel* self) {
     //getLogger().info("LateUpdate RedBar");
     GameEnergyUIPanel_Start(self);
     SetColor(self, 0.4f);
 }
 
-MAKE_HOOK_OFFSETLESS(GameEnergyUIPanel_HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
-    
-    
+MAKE_HOOK_MATCH(GameEnergyUIPanel_HandleGameEnergyDidChange, &GameEnergyUIPanel::HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
     GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
-    getLogger().info(std::to_string(energy));
+    //getLogger().info(std::to_string(energy));
     SetColor(self, energy);
 }
 
@@ -157,7 +161,7 @@ float * Wheel(int WheelPos) {
 }
 
 
-MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self) {
+MAKE_HOOK_MATCH(GameEnergyCounter_LateUpdate, &GameEnergyCounter::LateUpdate, void, GameEnergyCounter* self) {
     //getLogger().info("LateUpdate RedBar");
     GameEnergyCounter_LateUpdate(self);
     if ((energyBarMaterialStore != nullptr && energyBarStore != nullptr && energyy == 1.0 && getModConfig().Rainbow.GetValue()) || (energyBarMaterialStore != nullptr && energyBarStore != nullptr && getModConfig().AlwaysRainbow.GetValue())) {
@@ -175,7 +179,7 @@ MAKE_HOOK_OFFSETLESS(GameEnergyCounter_LateUpdate, void, GameEnergyCounter* self
     }
 }
 
-MAKE_HOOK_OFFSETLESS(SceneManager_ActiveSceneChanged, void, UnityEngine::SceneManagement::Scene previousActiveScene, UnityEngine::SceneManagement::Scene nextActiveScene) {
+MAKE_HOOK_MATCH(SceneManager_ActiveSceneChanged, &UnityEngine::SceneManagement::SceneManager::Internal_ActiveSceneChanged, void, UnityEngine::SceneManagement::Scene previousActiveScene, UnityEngine::SceneManagement::Scene nextActiveScene) {
     SceneManager_ActiveSceneChanged(previousActiveScene, nextActiveScene);
     energyBarStore = nullptr;
     energyBarMaterialStore = nullptr;
@@ -198,9 +202,9 @@ extern "C" void load() {
     LoggerContextObject logger = getLogger().WithContext("load");
     QuestUI::Register::RegisterModSettingsViewController(modInfo, DidActivate);
     // Install our hooks
-    INSTALL_HOOK_OFFSETLESS(logger, GameEnergyUIPanel_HandleGameEnergyDidChange, il2cpp_utils::FindMethodUnsafe("", "GameEnergyUIPanel", "HandleGameEnergyDidChange", 1));
-    INSTALL_HOOK_OFFSETLESS(logger, GameEnergyCounter_LateUpdate, il2cpp_utils::FindMethodUnsafe("", "GameEnergyCounter", "LateUpdate", 0));
-    INSTALL_HOOK_OFFSETLESS(logger, GameEnergyUIPanel_Start, il2cpp_utils::FindMethodUnsafe("", "GameEnergyUIPanel", "Start", 0));
-    INSTALL_HOOK_OFFSETLESS(logger, SceneManager_ActiveSceneChanged, il2cpp_utils::FindMethodUnsafe("UnityEngine.SceneManagement", "SceneManager", "Internal_ActiveSceneChanged", 2));
+    INSTALL_HOOK(logger, GameEnergyUIPanel_HandleGameEnergyDidChange);
+    INSTALL_HOOK(logger, GameEnergyCounter_LateUpdate);
+    INSTALL_HOOK(logger, GameEnergyUIPanel_Start);
+    INSTALL_HOOK(logger, SceneManager_ActiveSceneChanged);
     getLogger().info("Installed all hooks!");
 }
