@@ -43,7 +43,7 @@ LOCAL_MODULE := questui
 LOCAL_EXPORT_C_INCLUDES := extern/questui
 LOCAL_SRC_FILES := extern/libquestui.so
 include $(PREBUILT_SHARED_LIBRARY)
-# Creating prebuilt for dependency: custom-types - version: 0.12.5
+# Creating prebuilt for dependency: custom-types - version: 0.12.6
 include $(CLEAR_VARS)
 LOCAL_MODULE := custom-types
 LOCAL_EXPORT_C_INCLUDES := extern/custom-types

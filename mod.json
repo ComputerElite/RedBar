@@ -9,6 +9,9 @@
   "modFiles": [
     "libRedBar.so"
   ],
+  "libraryFiles": [
+    "libbeatsaber-hook_2_2_4.so"
+  ],
   "dependencies": [],
   "fileCopies": []
 }
