@@ -122,7 +122,7 @@ void SetColor(GameEnergyUIPanel* self, float energy) {
 MAKE_HOOK_MATCH(GameEnergyUIPanel_Start, &GameEnergyUIPanel::Start, void, GameEnergyUIPanel* self) {
     //getLogger().info("LateUpdate RedBar");
     GameEnergyUIPanel_Start(self);
-    SetColor(self, 0.4f);
+    SetColor(self, 0.5f);
 }
 
 MAKE_HOOK_MATCH(GameEnergyUIPanel_HandleGameEnergyDidChange, &GameEnergyUIPanel::HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
