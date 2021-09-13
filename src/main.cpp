@@ -199,8 +199,10 @@ extern "C" void load() {
     getModConfig().Init(modInfo);
     QuestUI::Init();
 
+
     LoggerContextObject logger = getLogger().WithContext("load");
     QuestUI::Register::RegisterModSettingsViewController(modInfo, DidActivate);
+    QuestUI::Register::RegisterMainMenuModSettingsViewController(modInfo, DidActivate);
     // Install our hooks
     INSTALL_HOOK(logger, GameEnergyUIPanel_HandleGameEnergyDidChange);
     INSTALL_HOOK(logger, GameEnergyCounter_LateUpdate);
