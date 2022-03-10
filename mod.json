@@ -2,10 +2,10 @@
   "_QPVersion": "0.1.1",
   "id": "RedBar",
   "name": "RedBar",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "author": "ComputerElite",
   "packageId": "com.beatgames.beatsaber",
-  "packageVersion": "1.19.1",
+  "packageVersion": "1.20.0",
   "modFiles": [
     "libRedBar_0_1_0.so"
   ],
