@@ -126,7 +126,7 @@ MAKE_HOOK_MATCH(GameEnergyUIPanel_Start, &GameEnergyUIPanel::Start, void, GameEn
     SetColor(self, 0.5f);
 }
 
-MAKE_HOOK_MATCH(GameEnergyUIPanel_HandleGameEnergyDidChange, &GameEnergyUIPanel::HandleGameEnergyDidChange, void, GameEnergyUIPanel* self, float energy) {
+MAKE_HOOK_MATCH(GameEnergyUIPanel_HandleGameEnergyDidChange, &GameEnergyUIPanel::RefreshEnergyUI, void, GameEnergyUIPanel* self, float energy) {
     GameEnergyUIPanel_HandleGameEnergyDidChange(self, energy);
     //getLogger().info(std::to_string(energy));
     SetColor(self, energy);
