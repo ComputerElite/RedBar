@@ -53,7 +53,7 @@ void SetColor(GameEnergyUIPanel* self, float energy) {
     color = getModConfig().Defhp.GetValue();
     color.a = getModConfig().Alpha.GetValue();
     
-    UnityEngine::UI::Image* energyBar = self->dyn__energyBar();
+    UnityEngine::UI::Image* energyBar = self->energyBar;
     
 
     
