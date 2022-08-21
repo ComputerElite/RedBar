@@ -33,7 +33,7 @@
         },
         {
             "label": "Powershell Build and Copy",
-            "detail": "Builds and copies the library to the Quest using adb and force-quits Beat Saber",
+            "detail": "Builds and copies the library to the Quest using ADB and force-quits Beat Saber",
             "type": "shell",
             "command": "./copy.ps1",
             "windows": {
@@ -45,12 +45,12 @@
             }
         },
         {
-            "label": "BMBF Build",
-            "detail": "Builds a .zip to be uploaded into BMBF",
+            "label": "QMOD Build",
+            "detail": "Builds a .qmod to be installed into BMBF or QuestPatcher",
             "type": "shell",
-            "command": "./buildBMBF.ps1",
+            "command": "./buildQMOD.ps1",
             "windows": {
-                "command": "./buildBMBF.ps1"
+                "command": "./buildQMOD.ps1"
             },
             "args": [],
             "group": "build",
@@ -60,9 +60,30 @@
         },
         {
             "label": "Start logging",
-            "detail": "Records a log to log.txt using adb logcat",
+            "detail": "Begin logging from the Quest to the console",
             "type": "shell",
-            "command": "./startlogging.bat"
+            "command": "./start-logging.ps1",
+            "windows": {
+                "command": "./start-logging.ps1"
+            }
+        },
+        {
+            "label": "Start logging to file",
+            "detail": "Begin logging from the Quest to the console and saving output to a file 'logcat.log'",
+            "type": "shell",
+            "command": "./start-logging.ps1 --file",
+            "windows": {
+                "command": "./start-logging.ps1 --file"
+            }
+        },
+        {
+            "label": "Restart Beat Saber",
+            "detail": "Force-quits and restarts Beat Saber on the Quest",
+            "type": "shell",
+            "command": "./start-logging.ps1",
+            "windows": {
+                "command": "./start-logging.ps1"
+            }
         }
     ]
 }
