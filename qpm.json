@@ -1,55 +1,46 @@
 {
-	"sharedDir": "shared",
-	"dependenciesDir": "extern",
-	"info": {
-		"name": "RedBar",
-		"id": "RedBar",
-		"version": "1.9.1",
-		"url": null,
-		"additionalData": {
-			"overrideSoName": "libRedBar.so"
-		}
-	},
-	"dependencies": [
-		{
-			"id": "beatsaber-hook",
-			"versionRange": "^3.10.0",
-			"additionalData": {
-				"extraFiles": [
-					"src/inline-hook"
-				],
-				"useRelease": true
-			}
-		},
-		{
-			"id": "codegen",
-			"versionRange": "^0.25.0",
-			"additionalData": {}
-		},
-		{
-			"id": "modloader",
-			"versionRange": "=1.2.3",
-			"additionalData": {
-				
-			}
-		},
-		{
-		  "id": "questui",
-		  "versionRange": "^0.16.2",
-		  "additionalData": {}
-		},
-		{
-		  "id": "custom-types",
-		  "versionRange": "^0.15.18",
-		  "additionalData": {}
-		},
-		{
-		  "id": "config-utils",
-		  "versionRange": "*",
-		  "additionalData": {}
-		}
-	],
-	"additionalData": {
-		
-	}
+  "sharedDir": "shared",
+  "dependenciesDir": "extern",
+  "info": {
+    "name": "RedBar",
+    "id": "RedBar",
+    "version": "1.9.1",
+    "url": null,
+    "additionalData": {
+      "overrideSoName": "libRedBar.so"
+    }
+  },
+  "dependencies": [
+    {
+      "id": "modloader",
+      "versionRange": "=1.2.3",
+      "additionalData": {}
+    },
+    {
+      "id": "beatsaber-hook",
+      "versionRange": "^3.14.0",
+      "additionalData": {}
+    },
+    {
+      "id": "questui",
+      "versionRange": "^0.17.5",
+      "additionalData": {}
+    },
+    {
+      "id": "codegen",
+      "versionRange": "^0.28.0",
+      "additionalData": {}
+    },
+    {
+      "id": "custom-types",
+      "versionRange": "^0.15.21",
+      "additionalData": {}
+    },
+    {
+      "id": "config-utils",
+      "versionRange": "^0.8.0",
+      "additionalData": {}
+    }
+  ],
+  "additionalData": {}
 }
