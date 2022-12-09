@@ -23,23 +23,23 @@
         "additionalData": {}
       },
       {
-        "id": "questui",
-        "versionRange": "^0.17.5",
+        "id": "codegen",
+        "versionRange": "^0.31.0",
         "additionalData": {}
       },
       {
-        "id": "codegen",
-        "versionRange": "^0.28.0",
+        "id": "questui",
+        "versionRange": "^0.17.9",
         "additionalData": {}
       },
       {
         "id": "custom-types",
-        "versionRange": "^0.15.21",
+        "versionRange": "^0.15.22",
         "additionalData": {}
       },
       {
         "id": "config-utils",
-        "versionRange": "^0.8.0",
+        "versionRange": "^1.0.1",
         "additionalData": {}
       }
     ],
@@ -71,30 +71,41 @@
     {
       "dependency": {
         "id": "config-utils",
-        "versionRange": "^0.8.0",
+        "versionRange": "^1.0.1",
         "additionalData": {
           "headersOnly": true,
-          "soLink": "https://github.com/darknight1050/config-utils/releases/download/v0.8.0/libconfig-utils_test.so",
-          "debugSoLink": "https://github.com/darknight1050/config-utils/releases/download/v0.8.0/debug_libconfig-utils_test.so",
+          "soLink": "https://github.com/darknight1050/config-utils/releases/download/v1.0.1/libconfig-utils_test.so",
+          "debugSoLink": "https://github.com/darknight1050/config-utils/releases/download/v1.0.1/debug_libconfig-utils_test.so",
           "overrideSoName": "libconfig-utils_test.so",
-          "branchName": "version-v0.8.0"
+          "branchName": "version-v1.0.1"
         }
       },
-      "version": "0.8.0"
+      "version": "1.0.1"
     },
     {
       "dependency": {
         "id": "custom-types",
-        "versionRange": "^0.15.21",
+        "versionRange": "^0.15.22",
         "additionalData": {
-          "soLink": "https://github.com/sc2ad/Il2CppQuestTypePatching/releases/download/v0.15.21/libcustom-types.so",
-          "debugSoLink": "https://github.com/sc2ad/Il2CppQuestTypePatching/releases/download/v0.15.21/debug_libcustom-types.so",
+          "soLink": "https://github.com/sc2ad/Il2CppQuestTypePatching/releases/download/v0.15.22/libcustom-types.so",
+          "debugSoLink": "https://github.com/sc2ad/Il2CppQuestTypePatching/releases/download/v0.15.22/debug_libcustom-types.so",
           "overrideSoName": "libcustom-types.so",
-          "modLink": "https://github.com/sc2ad/Il2CppQuestTypePatching/releases/download/v0.15.21/CustomTypes.qmod",
-          "branchName": "version-v0.15.21"
+          "modLink": "https://github.com/sc2ad/Il2CppQuestTypePatching/releases/download/v0.15.22/CustomTypes.qmod",
+          "branchName": "version-v0.15.22"
         }
       },
-      "version": "0.15.21"
+      "version": "0.15.22"
+    },
+    {
+      "dependency": {
+        "id": "rapidjson-macros",
+        "versionRange": "^0.4.2",
+        "additionalData": {
+          "headersOnly": true,
+          "branchName": "version-v0.4.2"
+        }
+      },
+      "version": "0.4.2"
     },
     {
       "dependency": {
@@ -111,26 +122,26 @@
     {
       "dependency": {
         "id": "codegen",
-        "versionRange": "^0.28.0",
+        "versionRange": "^0.31.0",
         "additionalData": {
-          "soLink": "https://github.com/sc2ad/BeatSaber-Quest-Codegen/releases/download/v0.28.0/libcodegen.so",
+          "soLink": "https://github.com/sc2ad/BeatSaber-Quest-Codegen/releases/download/v0.31.0/libcodegen.so",
           "overrideSoName": "libcodegen.so",
-          "modLink": "https://github.com/sc2ad/BeatSaber-Quest-Codegen/releases/download/v0.28.0/Codegen.qmod",
-          "branchName": "version-v0.28.0"
+          "modLink": "https://github.com/sc2ad/BeatSaber-Quest-Codegen/releases/download/v0.31.0/Codegen.qmod",
+          "branchName": "version-v0.31.0"
         }
       },
-      "version": "0.28.0"
+      "version": "0.31.0"
     },
     {
       "dependency": {
         "id": "questui",
-        "versionRange": "^0.17.5",
+        "versionRange": "^0.17.9",
         "additionalData": {
-          "soLink": "https://github.com/darknight1050/QuestUI/releases/download/v0.17.5/libquestui.so",
-          "debugSoLink": "https://github.com/darknight1050/QuestUI/releases/download/v0.17.5/debug_libquestui.so",
+          "soLink": "https://github.com/darknight1050/QuestUI/releases/download/v0.17.9/libquestui.so",
+          "debugSoLink": "https://github.com/darknight1050/QuestUI/releases/download/v0.17.9/debug_libquestui.so",
           "overrideSoName": "libquestui.so",
-          "modLink": "https://github.com/darknight1050/QuestUI/releases/download/v0.17.5/QuestUI.qmod",
-          "branchName": "version-v0.17.5",
+          "modLink": "https://github.com/darknight1050/QuestUI/releases/download/v0.17.9/QuestUI.qmod",
+          "branchName": "version-v0.17.9",
           "compileOptions": {
             "systemIncludes": [
               "shared/cppcodec"
@@ -138,7 +149,7 @@
           }
         }
       },
-      "version": "0.17.5"
+      "version": "0.17.9"
     }
   ]
 }
