@@ -4,7 +4,7 @@
   "info": {
     "name": "RedBar",
     "id": "RedBar",
-    "version": "1.9.1",
+    "version": "1.12.0",
     "url": null,
     "additionalData": {
       "overrideSoName": "libRedBar.so"
@@ -22,25 +22,24 @@
       "additionalData": {}
     },
     {
-      "id": "questui",
-      "versionRange": "^0.17.5",
+      "id": "codegen",
+      "versionRange": "^0.31.0",
       "additionalData": {}
     },
     {
-      "id": "codegen",
-      "versionRange": "^0.28.0",
+      "id": "questui",
+      "versionRange": "^0.17.9",
       "additionalData": {}
     },
     {
       "id": "custom-types",
-      "versionRange": "^0.15.21",
+      "versionRange": "^0.15.22",
       "additionalData": {}
     },
     {
       "id": "config-utils",
-      "versionRange": "^0.8.0",
+      "versionRange": "^1.0.1",
       "additionalData": {}
     }
-  ],
-  "additionalData": {}
+  ]
 }

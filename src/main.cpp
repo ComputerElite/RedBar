@@ -35,7 +35,6 @@ using namespace UnityEngine;
 using namespace QuestUI;
 
 static ModInfo modInfo;
-DEFINE_CONFIG(ModConfig);
 
 Logger& getLogger() {
     static Logger* logger = new Logger(modInfo, LoggerOptions(false, true));
