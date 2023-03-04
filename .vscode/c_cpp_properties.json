@@ -3,7 +3,7 @@
     {
       "defines": [
         "MOD_ID=\"#{id}\"",
-        "VERSION=\"0.1.0\"",
+        "VERSION=\"#{version}\"",
         "__GNUC__",
         "__aarch64__"
       ],
